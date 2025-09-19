@@ -5,6 +5,7 @@ import com.example.authify.dto.ProfileResponse;
 import com.example.authify.entity.UserEntity;
 import com.example.authify.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService{
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
     @Override
@@ -25,12 +27,18 @@ public class ProfileServiceImpl implements ProfileService{
         return convertToProfileResponse(userEntity);
     }
 
+    @Override
+    public ProfileResponse getProfile(String email) {
+      UserEntity existingUser = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        return convertToProfileResponse(existingUser);
+    }
+
     private UserEntity convertToUserEntity(ProfileRequest request){
        return  UserEntity.builder()
                 .email(request.getEmail())
                 .userId(UUID.randomUUID().toString())
                 .name(request.getName())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .isAccountverified(false)
                 .resetOtpExpireAt(0L)
                 .verifyOtp(null)
