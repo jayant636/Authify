@@ -6,6 +6,7 @@ import com.example.authify.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,5 +27,10 @@ public class ProfileController {
     @GetMapping("/profile")
     public ProfileResponse getProfile(@CurrentSecurityContext(expression = "authentication?.name") String email){
       return profileService.getProfile(email);
+    }
+
+    @GetMapping(path = "/is-authenticated")
+    public ResponseEntity<Boolean> isAuthenticated(@CurrentSecurityContext(expression = "authentication?.name") String email){
+        return ResponseEntity.ok(email != null);
     }
 }

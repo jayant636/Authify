@@ -20,6 +20,6 @@ public class ProfileRequest {
     @Email(message = "Enter valid email address")
     private String email;
 
-    @Min(6)
+
     private String password;
 }
